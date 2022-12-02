@@ -47,6 +47,15 @@ services:
       PGADMIN_LISTEN_ADDRESS: 0.0.0.0
       PGADMIN_LISTEN_PORT: 15432
 
+  client:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend/:/frontend/
+      - /frontend/node_modules
+    ports:
+      - "8080:8080"
 
 volumes:
   postgres_data:
