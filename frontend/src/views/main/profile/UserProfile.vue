@@ -2,12 +2,17 @@
   <v-container fluid>
     <v-card class="ma-3 pa-3">
       <v-card-title primary-title>
-        <div class="headline primary--text">User Profile</div>
+        <div class="headline primary--text">Профиль</div>
       </v-card-title>
       <v-card-text>
         <div class="my-4">
-          <div class="subheading secondary--text text--lighten-3">Full Name</div>
-          <div class="title primary--text text--darken-2" v-if="userProfile && userProfile.full_name">{{userProfile.full_name}}</div>
+          <div class="subheading secondary--text text--lighten-3">Имя</div>
+          <div class="title primary--text text--darken-2" v-if="userProfile && userProfile.first_name">{{userProfile.first_name}}</div>
+          <div class="title primary--text text--darken-2" v-else>-----</div>
+        </div>
+        <div class="my-4">
+          <div class="subheading secondary--text text--lighten-3">Фамилия</div>
+          <div class="title primary--text text--darken-2" v-if="userProfile && userProfile.last_name">{{userProfile.last_name}}</div>
           <div class="title primary--text text--darken-2" v-else>-----</div>
         </div>
         <div class="my-3">
@@ -17,8 +22,8 @@
         </div>
       </v-card-text>
       <v-card-actions>
-        <v-btn to="/main/profile/edit">Edit</v-btn>
-        <v-btn to="/main/profile/password">Change password</v-btn>
+        <v-btn to="/main/profile/edit">Изменить</v-btn>
+        <v-btn to="/main/profile/password">Изменить пароль</v-btn>
       </v-card-actions>
     </v-card>
   </v-container>
