@@ -29,7 +29,7 @@ export const actions = {
                 commitSetLogInError(context, false);
                 await dispatchGetUserProfile(context);
                 await dispatchRouteLoggedIn(context);
-                commitAddNotification(context, { content: 'Logged in', color: 'success' });
+                commitAddNotification(context, { content: 'Вход выполнен', color: 'success' });
             } else {
                 await dispatchLogOut(context);
             }
@@ -98,7 +98,7 @@ export const actions = {
     },
     async actionUserLogOut(context: MainContext) {
         await dispatchLogOut(context);
-        commitAddNotification(context, { content: 'Logged out', color: 'success' });
+        commitAddNotification(context, { content: 'Выход выполнен', color: 'success' });
     },
     actionRouteLogOut(context: MainContext) {
         if (router.currentRoute.path !== '/login') {
