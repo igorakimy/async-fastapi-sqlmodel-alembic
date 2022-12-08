@@ -2,22 +2,42 @@
   <v-container fluid>
     <v-card class="ma-3 pa-3">
       <v-card-title primary-title>
-        <div class="headline primary--text">Create User</div>
+        <div class="headline primary--text">Добавление пользователя</div>
       </v-card-title>
       <v-card-text>
         <template>
           <v-form v-model="valid" ref="form" lazy-validation>
-            <v-text-field label="Full Name" v-model="fullName" required></v-text-field>
+            <v-text-field label="Имя" v-model="firstName" required></v-text-field>
+            <v-text-field label="Фамилия" v-model="lastName" required></v-text-field>
             <v-text-field label="E-mail" type="email" v-model="email" v-validate="'required|email'" data-vv-name="email" :error-messages="errors.collect('email')" required></v-text-field>
-            <div class="subheading secondary--text text--lighten-2">User is superuser <span v-if="isSuperuser">(currently is a superuser)</span><span v-else>(currently is not a superuser)</span></div>
-            <v-checkbox label="Is Superuser" v-model="isSuperuser"></v-checkbox>
-            <div class="subheading secondary--text text--lighten-2">User is active <span v-if="isActive">(currently active)</span><span v-else>(currently not active)</span></div>
-            <v-checkbox label="Is Active" v-model="isActive"></v-checkbox>
+            <div class="subheading secondary--text text--lighten-2">Является ли пользователь суперпользователем <span v-if="isSuperuser">(Да)</span><span v-else>(Нет)</span></div>
+            <v-checkbox label="Суперпользователь" v-model="isSuperuser"></v-checkbox>
+            <div class="subheading secondary--text text--lighten-2">Активен ли пользователь <span v-if="isActive">(Да)</span><span v-else>(Нет)</span></div>
+            <v-checkbox label="Активен" v-model="isActive"></v-checkbox>
             <v-layout align-center>
               <v-flex>
-                <v-text-field type="password" ref="password" label="Set Password" data-vv-name="password" data-vv-delay="100" v-validate="{required: true}" v-model="password1" :error-messages="errors.first('password')">
+                <v-text-field
+                    type="password"
+                    ref="password"
+                    label="Пароль"
+                    data-vv-name="password"
+                    data-vv-delay="100"
+                    v-validate="{required: true}"
+                    v-model="password1"
+                    :error-messages="errors.first('password')">
                 </v-text-field>
-                <v-text-field type="password" label="Confirm Password" data-vv-name="password_confirmation" data-vv-delay="100" data-vv-as="password" v-validate="{required: true, confirmed: 'password'}" v-model="password2" :error-messages="errors.first('password_confirmation')">
+                <v-text-field
+                    type="password"
+                    label="Пароль еще раз"
+                    data-vv-name="password_confirmation"
+                    data-vv-delay="100"
+                    data-vv-as="password"
+                    v-validate="{
+                      required: true,
+                      confirmed: 'password'
+                    }"
+                    v-model="password2"
+                    :error-messages="errors.first('password_confirmation')">
                 </v-text-field>
               </v-flex>
             </v-layout>
@@ -26,10 +46,10 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click="cancel">Cancel</v-btn>
-        <v-btn @click="reset">Reset</v-btn>
+        <v-btn @click="cancel">Отменить</v-btn>
+        <v-btn @click="reset">Сбросить</v-btn>
         <v-btn @click="submit" :disabled="!valid">
-              Save
+              Сохранить
             </v-btn>
       </v-card-actions>
     </v-card>
@@ -47,7 +67,8 @@ import { dispatchGetUsers, dispatchCreateUser } from '@/store/admin/actions';
 @Component
 export default class CreateUser extends Vue {
   public valid = false;
-  public fullName: string = '';
+  public firstName: string = '';
+  public lastName: string = '';
   public email: string = '';
   public isActive: boolean = true;
   public isSuperuser: boolean = false;
@@ -61,7 +82,8 @@ export default class CreateUser extends Vue {
   public reset() {
     this.password1 = '';
     this.password2 = '';
-    this.fullName = '';
+    this.firstName = '';
+    this.lastName = '';
     this.email = '';
     this.isActive = true;
     this.isSuperuser = false;
@@ -74,16 +96,20 @@ export default class CreateUser extends Vue {
     if (await this.$validator.validateAll()) {
       const updatedProfile: IUserProfileCreate = {
         email: this.email,
+        password: this.password1,
+        password_confirmation: this.password2
       };
-      if (this.fullName) {
-        updatedProfile.full_name = this.fullName;
+      if (this.firstName) {
+        updatedProfile.first_name = this.firstName;
+      }
+      if (this.lastName) {
+        updatedProfile.last_name = this.lastName;
       }
       if (this.email) {
         updatedProfile.email = this.email;
       }
       updatedProfile.is_active = this.isActive;
       updatedProfile.is_superuser = this.isSuperuser;
-      updatedProfile.password = this.password1;
       await dispatchCreateUser(this.$store, updatedProfile);
       this.$router.push('/main/admin/users');
     }

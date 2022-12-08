@@ -83,7 +83,7 @@ async def get_user_by_id(
 
 @router.post(
     "",
-    response_model=IPostResponseBase[IUserRead],
+    response_model=IUserRead,
     status_code=status.HTTP_201_CREATED
 )
 async def create_new_user(
@@ -108,7 +108,8 @@ async def create_new_user(
         if not role:
             raise RoleNotFoundException()
     new_user = await user_repo.create_with_role(data=request_data)
-    return response(data=new_user)
+    return new_user
+    # return response(data=new_user)
 
 
 @router.put("/{id}", response_model=IPutResponseBase[IUserRead])

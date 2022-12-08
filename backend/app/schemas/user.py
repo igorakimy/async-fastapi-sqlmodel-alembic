@@ -10,9 +10,9 @@ from .role import IRoleRead
 
 class IUserCreate(UserBase):
     password: str
-    password_repeat: str
+    password_confirmation: str
 
-    @validator('password_repeat', always=True)
+    @validator('password_confirmation', always=True)
     def password_match(cls, v, values):
         if 'password' in values and v != values['password']:
             raise ValueError('Passwords do not match')
@@ -24,7 +24,14 @@ class IUserCreate(UserBase):
 
 @optional
 class IUserUpdate(UserBase):
-    pass
+    password: Optional[str] = None
+    password_confirmation: Optional[str] = None
+
+    @validator("password_confirmation", always=True)
+    def password_match(cls, v, values):
+        if "password" in values and v != values["password"]:
+            raise ValueError("Passwords do not match")
+        return v
 
 
 class IUserRead(UserBase):
