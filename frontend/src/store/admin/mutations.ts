@@ -1,4 +1,4 @@
-import { IUserProfile } from '@/interfaces';
+import { IUserProfile, IUsersList } from '@/interfaces';
 import { AdminState } from './state';
 import { getStoreAccessors } from 'typesafe-vuex';
 import { State } from '../state';
@@ -12,9 +12,13 @@ export const mutations = {
         users.push(payload);
         state.users = users;
     },
+    unsetUser(state: AdminState, payload: IUserProfile) {
+        state.users = state.users.filter((user: IUserProfile) => user.id !== payload.id);
+    }
 };
 
 const { commit } = getStoreAccessors<AdminState, State>('');
 
 export const commitSetUser = commit(mutations.setUser);
 export const commitSetUsers = commit(mutations.setUsers);
+export const commitUnsetUser = commit(mutations.unsetUser);

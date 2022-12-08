@@ -2,26 +2,39 @@
   <div>
     <v-toolbar light>
       <v-toolbar-title>
-        Manage Users
+        Пользователи
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn color="primary" to="/main/admin/users/create">Create User</v-btn>
+      <v-btn color="primary" to="/main/admin/users/create">Добавить пользователя</v-btn>
     </v-toolbar>
-    <v-data-table :headers="headers" :items="users">
+    <v-data-table
+      :headers="headers"
+      :items="users"
+      :rows-per-page-items='[10,25,50,{"text":"Все","value":-1}]'
+      :rows-per-page-text="'Кол-во записей на странице:'">
       <template slot="items" slot-scope="props">
-        <td>{{ props.item.name }}</td>
+        <td>{{ props.item.first_name }}</td>
+        <td>{{ props.item.last_name }}</td>
         <td>{{ props.item.email }}</td>
-        <td>{{ props.item.full_name }}</td>
         <td><v-icon v-if="props.item.is_active">checkmark</v-icon></td>
         <td><v-icon v-if="props.item.is_superuser">checkmark</v-icon></td>
-        <td class="justify-center layout px-0">
+        <td class="justify-center layout px-0 ">
           <v-tooltip top>
-            <span>Edit</span>
-            <v-btn slot="activator" flat :to="{name: 'main-admin-users-edit', params: {id: props.item.id}}">
+            <span>Редактировать</span>
+            <v-btn slot="activator" flat icon color="green" :to="{name: 'main-admin-users-edit', params: {id: props.item.id}}">
               <v-icon>edit</v-icon>
             </v-btn>
           </v-tooltip>
+          <v-tooltip top>
+            <span>Удалить</span>
+            <v-btn slot="activator" flat icon color="red" @click="deleteUser(props.item.id)">
+              <v-icon>delete</v-icon>
+            </v-btn>
+          </v-tooltip>
         </td>
+      </template>
+      <template v-slot:pageText="props">
+        Показаны записи {{ props.pageStart }} - {{ props.pageStop }} из {{ props.itemsLength }}
       </template>
     </v-data-table>
   </div>
@@ -32,14 +45,20 @@ import { Component, Vue } from 'vue-property-decorator';
 import { Store } from 'vuex';
 import { IUserProfile } from '@/interfaces';
 import { readAdminUsers } from '@/store/admin/getters';
-import { dispatchGetUsers } from '@/store/admin/actions';
+import { dispatchGetUsers, dispatchDeleteUser } from '@/store/admin/actions';
 @Component
 export default class AdminUsers extends Vue {
   public headers = [
     {
-      text: 'Name',
+      text: 'Имя',
       sortable: true,
-      value: 'name',
+      value: 'first_name',
+      align: 'left',
+    },
+    {
+      text: 'Фамилия',
+      sortable: true,
+      value: 'last_name',
       align: 'left',
     },
     {
@@ -49,26 +68,21 @@ export default class AdminUsers extends Vue {
       align: 'left',
     },
     {
-      text: 'Full Name',
-      sortable: true,
-      value: 'full_name',
-      align: 'left',
-    },
-    {
-      text: 'Is Active',
+      text: 'Активность',
       sortable: true,
       value: 'isActive',
       align: 'left',
     },
     {
-      text: 'Is Superuser',
+      text: 'Суперпользователь',
       sortable: true,
       value: 'isSuperuser',
       align: 'left',
     },
     {
-      text: 'Actions',
+      text: 'Действия',
       value: 'id',
+      align: 'center',
     },
   ];
   get users() {
@@ -77,5 +91,9 @@ export default class AdminUsers extends Vue {
   public async mounted() {
     await dispatchGetUsers(this.$store);
   }
+  async deleteUser(userId: number) {
+    await dispatchDeleteUser(this.$store, { id: userId })
+  }
+
 }
 </script>

@@ -28,13 +28,16 @@ export const api = {
     return axios.put<IUserProfile>(`${apiUrl}/users/me`, data, authHeaders(token));
   },
   async getUsers(token: string) {
-    return axios.get<IUserProfile[]>(`${apiUrl}/users/`, authHeaders(token));
+    return axios.get<IUserProfile[]>(`${apiUrl}/users`, authHeaders(token));
   },
   async updateUser(token: string, userId: number, data: IUserProfileUpdate) {
     return axios.put(`${apiUrl}/users/${userId}`, data, authHeaders(token));
   },
   async createUser(token: string, data: IUserProfileCreate) {
-    return axios.post(`${apiUrl}/users/`, data, authHeaders(token));
+    return axios.post(`${apiUrl}/users`, data, authHeaders(token));
+  },
+  async deleteUser(token: string, userId: number) {
+    return axios.delete(`${apiUrl}/users/${userId}`, authHeaders(token))
   },
   async passwordRecovery(email: string) {
     return axios.post(`${apiUrl}/password-recovery/${email}`);
