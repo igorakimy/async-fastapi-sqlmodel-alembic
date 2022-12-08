@@ -2,12 +2,12 @@
   <v-container fluid>
     <v-card class="ma-3 pa-3">
       <v-card-title primary-title>
-        <div class="headline primary--text">Edit User</div>
+        <div class="headline primary--text">Редактирование пользователя</div>
       </v-card-title>
       <v-card-text>
         <template>
           <div class="my-3">
-            <div class="subheading secondary--text text--lighten-2">Username</div>
+<!--            <div class="subheading secondary&#45;&#45;text text&#45;&#45;lighten-2">Username</div>-->
             <div
               class="title primary--text text--darken-2"
               v-if="user"
@@ -23,8 +23,13 @@
             lazy-validation
           >
             <v-text-field
-              label="Full Name"
-              v-model="fullName"
+              label="Имя"
+              v-model="firstName"
+              required
+            ></v-text-field>
+            <v-text-field
+              label="Фамилия"
+              v-model="lastName"
               required
             ></v-text-field>
             <v-text-field
@@ -36,14 +41,14 @@
               :error-messages="errors.collect('email')"
               required
             ></v-text-field>
-            <div class="subheading secondary--text text--lighten-2">User is superuser <span v-if="isSuperuser">(currently is a superuser)</span><span v-else>(currently is not a superuser)</span></div>
+            <div class="subheading secondary--text text--lighten-2">Является ли пользователь суперпользователем <span v-if="isSuperuser">(Да)</span><span v-else>(Нет)</span></div>
             <v-checkbox
-              label="Is Superuser"
+              label="Суперпользователь"
               v-model="isSuperuser"
             ></v-checkbox>
-            <div class="subheading secondary--text text--lighten-2">User is active <span v-if="isActive">(currently active)</span><span v-else>(currently not active)</span></div>
+            <div class="subheading secondary--text text--lighten-2">Активен ли пользователь <span v-if="isActive">(Да)</span><span v-else>(Нет)</span></div>
             <v-checkbox
-              label="Is Active"
+              label="Активен"
               v-model="isActive"
             ></v-checkbox>
             <v-layout align-center>
@@ -58,7 +63,7 @@
                   :disabled="!setPassword"
                   type="password"
                   ref="password"
-                  label="Set Password"
+                  label="Новый пароль"
                   data-vv-name="password"
                   data-vv-delay="100"
                   v-validate="{required: setPassword}"
@@ -69,7 +74,7 @@
                 <v-text-field
                   v-show="setPassword"
                   type="password"
-                  label="Confirm Password"
+                  label="Новый пароль еще раз"
                   data-vv-name="password_confirmation"
                   data-vv-delay="100"
                   data-vv-as="password"
@@ -85,13 +90,13 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click="cancel">Cancel</v-btn>
-        <v-btn @click="reset">Reset</v-btn>
+        <v-btn @click="cancel">Отменить</v-btn>
+        <v-btn @click="reset">Сбросить</v-btn>
         <v-btn
           @click="submit"
           :disabled="!valid"
         >
-          Save
+          Сохранить
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -106,7 +111,8 @@ import { readAdminOneUser } from '@/store/admin/getters';
 @Component
 export default class EditUser extends Vue {
   public valid = true;
-  public fullName: string = '';
+  public firstName: string = '';
+  public lastName: string = '';
   public email: string = '';
   public isActive: boolean = true;
   public isSuperuser: boolean = false;
@@ -123,7 +129,8 @@ export default class EditUser extends Vue {
     this.password2 = '';
     this.$validator.reset();
     if (this.user) {
-      this.fullName = this.user.full_name;
+      this.firstName = this.user.first_name;
+      this.lastName = this.user.last_name;
       this.email = this.user.email;
       this.isActive = this.user.is_active;
       this.isSuperuser = this.user.is_superuser;
@@ -135,8 +142,11 @@ export default class EditUser extends Vue {
   public async submit() {
     if (await this.$validator.validateAll()) {
       const updatedProfile: IUserProfileUpdate = {};
-      if (this.fullName) {
-        updatedProfile.full_name = this.fullName;
+      if (this.firstName) {
+        updatedProfile.first_name = this.firstName;
+      }
+      if (this.lastName) {
+        updatedProfile.last_name = this.lastName;
       }
       if (this.email) {
         updatedProfile.email = this.email;
@@ -145,6 +155,7 @@ export default class EditUser extends Vue {
       updatedProfile.is_superuser = this.isSuperuser;
       if (this.setPassword) {
         updatedProfile.password = this.password1;
+        updatedProfile.password_confirmation = this.password2;
       }
       await dispatchUpdateUser(this.$store, { id: this.user!.id, user: updatedProfile });
       this.$router.push('/main/admin/users');

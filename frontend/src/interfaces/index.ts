@@ -12,6 +12,7 @@ export interface IUserProfileUpdate {
     first_name?: string;
     last_name?: string;
     password?: string;
+    password_confirmation?: string;
     is_active?: boolean;
     is_superuser?: boolean;
 }
