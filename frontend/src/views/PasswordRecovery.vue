@@ -5,19 +5,19 @@
         <v-flex xs12 sm8 md4>
           <v-card class="elevation-12">
             <v-toolbar dark color="primary">
-              <v-toolbar-title>{{appName}} - Password Recovery</v-toolbar-title>
+              <v-toolbar-title>{{appName}} - Восстановление пароля</v-toolbar-title>
             </v-toolbar>
             <v-card-text>
-              <p class="subheading">A password recovery email will be sent to the registered account</p>
+              <p class="subheading">Письмо для восстановления пароля будет отправлено на email зарегистрированной учетной записи</p>
               <v-form @keyup.enter="submit" v-model="valid" ref="form" @submit.prevent="" lazy-validation>
-                <v-text-field @keyup.enter="submit" label="Username" type="text" prepend-icon="person" v-model="username" v-validate="'required'" data-vv-name="username" :error-messages="errors.collect('username')" required></v-text-field>
+                <v-text-field @keyup.enter="submit" label="Email" type="text" prepend-icon="person" v-model="username" v-validate="'required'" data-vv-name="username" :error-messages="errors.collect('username')" required></v-text-field>
               </v-form>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn @click="cancel">Cancel</v-btn>
+              <v-btn @click="cancel">Отменить</v-btn>
               <v-btn @click.prevent="submit" :disabled="!valid">
-                Recover Password
+                Восстановить пароль
               </v-btn>
             </v-card-actions>
           </v-card>

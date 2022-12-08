@@ -32,3 +32,15 @@ class InvalidEmailOrPasswordException(HTTPException):
             detail=message or "Email or Password incorrect",
             headers=headers
         )
+
+
+class InvalidTokenException(HTTPException):
+
+    def __init__(
+        self,
+        message: Optional[str] = None,
+    ) -> None:
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=message or "Invalid token"
+        )

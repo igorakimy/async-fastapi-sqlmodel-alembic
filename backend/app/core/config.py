@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     API_PREFIX: str = f"/api/{API_VERSION}"
 
     PROJECT_NAME: str
+    SERVER_HOST: str
 
     JWT_ALGORITHM: str = "HS256"
 
@@ -34,6 +35,25 @@ class Settings(BaseSettings):
     DB_HOST: str
     DB_PORT: Union[int, str]
     DB_NAME: str
+
+    SMTP_TLS: bool = True
+    SMTP_PORT: Optional[int] = 2525
+    SMTP_HOST: Optional[str] = "smtp.mailtrap.io"
+    SMTP_USER: Optional[str] = "username"
+    SMTP_PASSWORD: Optional[str] = "password"
+
+    EMAILS_ENABLED: bool = False
+    EMAILS_FROM_EMAIL: Optional[EmailStr] = None
+    EMAILS_FROM_NAME: Optional[str] = None
+
+    @validator("EMAILS_FROM_NAME")
+    def get_project_name(cls, v: Optional[str], values: Dict[str, Any]) -> str:
+        if not v:
+            return values["PROJECT_NAME"]
+        return v
+
+    EMAILS_TEMPLATES_DIR: str = "/app/emails/templates"
+    EMAILS_RESET_TOKEN_EXPIRE_HOURS: int = 2
 
     DB_POOL_SIZE: int = 83
     WEB_CONCURRENCY: int = 9

@@ -1,9 +1,15 @@
-from typing import Optional, List
+from datetime import datetime
+from typing import Optional, List, Union
 
+from fastapi.encoders import jsonable_encoder
 from sqlmodel import select
 
 from app.models.user import User
-from app.schemas.user import IUserCreate
+from app.schemas.user import (
+    IUserRead,
+    IUserCreate,
+    IUserUpdate
+)
 from app.core.security import get_password_hash, verify_password
 from .base import BaseRepository
 
@@ -42,3 +48,40 @@ class UserRepository(BaseRepository):
         await self.db.commit()
         await self.db.refresh(db_obj)
         return db_obj
+
+    async def update_password(self, user: User, new_password: str) -> User:
+        user.password = get_password_hash(new_password)
+        self.db.add(user)
+        await self.db.commit()
+        await self.db.refresh(user)
+        return user
+
+    async def update_with_role(
+        self,
+        *,
+        model: User,
+        data: IUserUpdate
+    ) -> User:
+        obj_data = jsonable_encoder(model)
+
+        if isinstance(data, dict):
+            update_data = data
+        else:
+            update_data = data.dict(exclude_unset=True)
+
+        for field in obj_data:
+            if field in update_data:
+                setattr(model, field, update_data[field])
+            if field == self.UPDATED_AT:
+                setattr(model, field, datetime.utcnow())
+
+        if 'password' in update_data:
+            model.password = get_password_hash(update_data['password'])
+
+        self.db.add(model)
+        await self.db.commit()
+        await self.db.refresh(model)
+        return model
+
+    def is_active(self, user: User) -> bool:
+        return user.is_active

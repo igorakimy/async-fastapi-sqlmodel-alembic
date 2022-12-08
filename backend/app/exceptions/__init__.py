@@ -1,6 +1,7 @@
 from .credentials import (
     InvalidCredentialsException,
     InvalidEmailOrPasswordException,
+    InvalidTokenException,
 )
 
 from .users import (
