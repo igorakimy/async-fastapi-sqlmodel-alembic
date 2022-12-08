@@ -49,8 +49,8 @@ export const actions = {
         }
     },
     async actionUpdateUserProfile(context: MainContext, payload) {
+        const loadingNotification = { content: 'Сохранение...', showProgress: false };
         try {
-            const loadingNotification = { content: 'saving', showProgress: true };
             commitAddNotification(context, loadingNotification);
             const response = (await Promise.all([
                 api.updateMe(context.state.token, payload),
@@ -58,8 +58,9 @@ export const actions = {
             ]))[0];
             commitSetUserProfile(context, response.data);
             commitRemoveNotification(context, loadingNotification);
-            commitAddNotification(context, { content: 'Profile successfully updated', color: 'success' });
+            commitAddNotification(context, { content: 'Профиль успешно изменен', color: 'success' });
         } catch (error) {
+            commitRemoveNotification(context, loadingNotification);
             await dispatchCheckApiError(context, error);
         }
     },
@@ -107,11 +108,13 @@ export const actions = {
     async actionCheckApiError(context: MainContext, payload: AxiosError) {
         if (payload.response!.status === 401) {
             await dispatchLogOut(context);
+        } else {
+            commitAddNotification(context, { content: payload.response!.data.detail, color: 'error' });
         }
     },
     actionRouteLoggedIn(context: MainContext) {
         if (router.currentRoute.path === '/login' || router.currentRoute.path === '/') {
-            router.push('/main');
+            router.push('/main/dashboard');
         }
     },
     async removeNotification(context: MainContext, payload: { notification: AppNotification, timeout: number }) {
