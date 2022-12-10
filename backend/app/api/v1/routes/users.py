@@ -140,7 +140,7 @@ async def create_new_user(
     # return response(data=new_user)
 
 
-@router.put("/{id}", response_model=IPutResponseBase[IUserRead])
+@router.put("/{id}", response_model=IUserRead)
 async def update_user(
     id: int,
     request_data: IUserUpdate,

@@ -5,7 +5,7 @@
         <div class="headline primary--text">Панель управления</div>
       </v-card-title>
       <v-card-text>
-        <div class="headline font-weight-light ma-5">Добро пожаловать, {{greetedUser}}</div>
+        <div class="headline font-weight-light ml-0 mb-5 mt-5">Добро пожаловать, <span class="font-weight-bold">{{greetedUser}}</span></div>
       </v-card-text>
       <v-card-actions>
         <v-btn to="/main/profile/view">Профиль</v-btn>

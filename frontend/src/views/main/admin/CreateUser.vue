@@ -10,9 +10,16 @@
             <v-text-field label="Имя" v-model="firstName" required></v-text-field>
             <v-text-field label="Фамилия" v-model="lastName" required></v-text-field>
             <v-text-field label="E-mail" type="email" v-model="email" v-validate="'required|email'" data-vv-name="email" :error-messages="errors.collect('email')" required></v-text-field>
-            <div class="subheading secondary--text text--lighten-2">Является ли пользователь суперпользователем <span v-if="isSuperuser">(Да)</span><span v-else>(Нет)</span></div>
+            <v-select
+                v-model="role_id"
+                label="Роль"
+                :items="roles"
+                item-text="name"
+                item-value="id"
+            ></v-select>
+            <div class="subheading primary--text">Является ли пользователь суперпользователем <span v-if="isSuperuser">(Да)</span><span v-else>(Нет)</span></div>
             <v-checkbox label="Суперпользователь" v-model="isSuperuser"></v-checkbox>
-            <div class="subheading secondary--text text--lighten-2">Активен ли пользователь <span v-if="isActive">(Да)</span><span v-else>(Нет)</span></div>
+            <div class="subheading primary--text">Активен ли пользователь <span v-if="isActive">(Да)</span><span v-else>(Нет)</span></div>
             <v-checkbox label="Активен" v-model="isActive"></v-checkbox>
             <v-layout align-center>
               <v-flex>
@@ -63,13 +70,15 @@ import {
   IUserProfileUpdate,
   IUserProfileCreate,
 } from '@/interfaces';
-import { dispatchGetUsers, dispatchCreateUser } from '@/store/admin/actions';
+import { dispatchGetUsers, dispatchCreateUser, dispatchGetRoles } from '@/store/admin/actions';
+import {readAdminRoles} from "@/store/admin/getters";
 @Component
 export default class CreateUser extends Vue {
   public valid = false;
   public firstName: string = '';
   public lastName: string = '';
   public email: string = '';
+  public role_id: number = 0;
   public isActive: boolean = true;
   public isSuperuser: boolean = false;
   public setPassword = false;
@@ -77,6 +86,7 @@ export default class CreateUser extends Vue {
   public password2: string = '';
   public async mounted() {
     await dispatchGetUsers(this.$store);
+    await dispatchGetRoles(this.$store);
     this.reset();
   }
   public reset() {
@@ -85,6 +95,7 @@ export default class CreateUser extends Vue {
     this.firstName = '';
     this.lastName = '';
     this.email = '';
+    this.role_id = 0;
     this.isActive = true;
     this.isSuperuser = false;
     this.$validator.reset();
@@ -97,7 +108,8 @@ export default class CreateUser extends Vue {
       const updatedProfile: IUserProfileCreate = {
         email: this.email,
         password: this.password1,
-        password_confirmation: this.password2
+        password_confirmation: this.password2,
+        role_id: this.role_id,
       };
       if (this.firstName) {
         updatedProfile.first_name = this.firstName;
@@ -113,6 +125,9 @@ export default class CreateUser extends Vue {
       await dispatchCreateUser(this.$store, updatedProfile);
       this.$router.push('/main/admin/users');
     }
+  }
+  get roles() {
+    return readAdminRoles(this.$store)
   }
 }
 </script>

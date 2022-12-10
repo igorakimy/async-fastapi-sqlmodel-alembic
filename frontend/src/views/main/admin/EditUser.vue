@@ -41,12 +41,20 @@
               :error-messages="errors.collect('email')"
               required
             ></v-text-field>
-            <div class="subheading secondary--text text--lighten-2">Является ли пользователь суперпользователем <span v-if="isSuperuser">(Да)</span><span v-else>(Нет)</span></div>
+            <v-select
+                :value="select"
+                v-model="role_id"
+                label="Роль"
+                :items="roles"
+                item-text="name"
+                item-value="id"
+            ></v-select>
+            <div class="subheading primary--text">Является ли пользователь суперпользователем <span v-if="isSuperuser">(Да)</span><span v-else>(Нет)</span></div>
             <v-checkbox
               label="Суперпользователь"
               v-model="isSuperuser"
             ></v-checkbox>
-            <div class="subheading secondary--text text--lighten-2">Активен ли пользователь <span v-if="isActive">(Да)</span><span v-else>(Нет)</span></div>
+            <div class="subheading primary--text">Активен ли пользователь <span v-if="isActive">(Да)</span><span v-else>(Нет)</span></div>
             <v-checkbox
               label="Активен"
               v-model="isActive"
@@ -106,14 +114,15 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { IUserProfile, IUserProfileUpdate } from '@/interfaces';
-import { dispatchGetUsers, dispatchUpdateUser } from '@/store/admin/actions';
-import { readAdminOneUser } from '@/store/admin/getters';
+import { dispatchGetUsers, dispatchUpdateUser, dispatchGetRoles } from '@/store/admin/actions';
+import { readAdminOneUser, readAdminRoles } from '@/store/admin/getters';
 @Component
 export default class EditUser extends Vue {
   public valid = true;
   public firstName: string = '';
   public lastName: string = '';
   public email: string = '';
+  public role_id: number = 0;
   public isActive: boolean = true;
   public isSuperuser: boolean = false;
   public setPassword = false;
@@ -121,6 +130,7 @@ export default class EditUser extends Vue {
   public password2: string = '';
   public async mounted() {
     await dispatchGetUsers(this.$store);
+    await dispatchGetRoles(this.$store)
     this.reset();
   }
   public reset() {
@@ -134,6 +144,7 @@ export default class EditUser extends Vue {
       this.email = this.user.email;
       this.isActive = this.user.is_active;
       this.isSuperuser = this.user.is_superuser;
+      this.role_id = this.user.role.id;
     }
   }
   public cancel() {
@@ -151,6 +162,7 @@ export default class EditUser extends Vue {
       if (this.email) {
         updatedProfile.email = this.email;
       }
+      updatedProfile.role_id = this.role_id;
       updatedProfile.is_active = this.isActive;
       updatedProfile.is_superuser = this.isSuperuser;
       if (this.setPassword) {
@@ -163,6 +175,14 @@ export default class EditUser extends Vue {
   }
   get user() {
     return readAdminOneUser(this.$store)(+this.$router.currentRoute.params.id);
+  }
+  get roles() {
+    return readAdminRoles(this.$store)
+  }
+  get select() {
+    if (this.user) {
+      return this.user.role
+    }
   }
 }
 </script>

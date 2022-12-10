@@ -3,7 +3,10 @@ import { apiUrl } from '@/env';
 import {
   IUserProfile,
   IUserProfileUpdate,
-  IUserProfileCreate
+  IUserProfileCreate,
+  IRoleSelect,
+  IRoleCreate,
+  IRoleUpdate
 } from './interfaces';
 
 function authHeaders(token: string) {
@@ -40,12 +43,24 @@ export const api = {
     return axios.delete(`${apiUrl}/users/${userId}`, authHeaders(token))
   },
   async passwordRecovery(email: string) {
-    return axios.post(`${apiUrl}/password-recovery/${email}`);
+    return axios.post(`${apiUrl}/login/password-recovery/${email}`);
   },
   async resetPassword(password: string, token: string) {
-    return axios.post(`${apiUrl}/reset-password/`, {
+    return axios.post(`${apiUrl}/login/reset-password`, {
       new_password: password,
       token,
     });
+  },
+  async getRoles(token: string) {
+    return axios.get<IRoleSelect[]>(`${apiUrl}/roles`, authHeaders(token));
+  },
+  async createRole(token: string, data: IRoleCreate) {
+    return axios.post(`${apiUrl}/roles`, data, authHeaders(token));
+  },
+  async updateRole(token: string, roleId: number, data: IRoleUpdate) {
+    return axios.put(`${apiUrl}/roles/${roleId}`, data, authHeaders(token));
+  },
+  async deleteRole(token: string, roleId: number) {
+    return axios.delete(`${apiUrl}/roles/${roleId}`, authHeaders(token));
   },
 };

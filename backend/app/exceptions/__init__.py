@@ -14,4 +14,5 @@ from .users import (
 from .roles import (
     InvalidRoleException,
     RoleNotFoundException,
+    RoleSelfDeleteException,
 )

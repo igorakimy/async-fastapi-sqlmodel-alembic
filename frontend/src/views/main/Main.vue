@@ -56,6 +56,14 @@
               <v-list-tile-title>Добавить пользователя</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
+          <v-list-tile to="/main/admin/roles/all">
+            <v-list-tile-action>
+              <v-icon>manage_accounts</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>Роли</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
         </v-list>
         <v-spacer></v-spacer>
         <v-list>
@@ -110,10 +118,6 @@
     <v-content>
       <router-view></router-view>
     </v-content>
-    <v-footer class="pa-3" fixed app>
-      <v-spacer></v-spacer>
-      <span>&copy; {{appName}}</span>
-    </v-footer>
   </div>
 </template>
 

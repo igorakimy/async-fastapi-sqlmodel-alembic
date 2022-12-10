@@ -52,7 +52,7 @@ def get_current_user(required_roles: List[str] = None):
         if required_roles:
             if not any(role == user.role.slug for role in required_roles):
                 roles = ("'" + role + "'" for role in required_roles)
-                msg = f"Role {', '.join(roles)} is required for this action"
+                msg = f"Следующие роли требуются для этого действия: {', '.join(roles)}"
                 raise InvalidRoleException(msg)
 
         return user
@@ -66,7 +66,7 @@ async def user_exists(
 ) -> IUserCreate:
     user = await user_repo.get_by_email(email=new_user.email)
     if user:
-        msg = "There is already exists a user with same email"
+        msg = "Уже существует пользователь с таким email"
         raise UserAlreadyExistsException(msg)
     return new_user
 

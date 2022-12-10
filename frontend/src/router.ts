@@ -84,6 +84,21 @@ export default new Router({
                   component: () => import(
                     /* webpackChunkName: "main-admin-users-create" */ './views/main/admin/CreateUser.vue'),
                 },
+                {
+                  path: 'roles',
+                  redirect: 'roles/all',
+                },
+                {
+                  path: 'roles/all',
+                  component: () => import(
+                    /* webpackChunkName: "main-admin-roles" */ './views/main/admin/AdminRoles.vue'),
+                },
+                {
+                  path: 'roles/edit/:id',
+                  name: 'main-admin-roles-edit',
+                  component: () => import(
+                    /* webpackChunkName: "main-admin-role-edit" */ './views/main/admin/EditRole.vue'),
+                },
               ],
             },
           ],
