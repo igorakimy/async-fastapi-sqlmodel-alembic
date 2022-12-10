@@ -24,7 +24,7 @@ help:
 	@echo "make"
 	@echo "    run-build"
 	@echo "        Run docker compose and force build containers."
-	@echo "    run-dev"
+	@echo "    run"
 	@echo "        Run docker compose."
 	@echo "    stop"
 	@echo "        Stop docker compose."
@@ -46,5 +46,5 @@ init-db:
 	docker-compose -f docker-compose.yml exec server python app/initial_data.py
 
 add-migration:
-	docker compose -f docker-compose.yml exec server alembic revision --autogenerate && \
-	docker compose -f docker-compose.yml exec server alembic upgrade head
+	docker-compose -f docker-compose.yml exec server alembic revision --autogenerate && \
+	docker-compose -f docker-compose.yml exec server alembic upgrade head
